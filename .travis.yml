@@ -8,11 +8,18 @@ before_install:
   - docker build -t vlasceanumihai/react-tests -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true mihaivlasceanu/react-tests npm run test -- --coverage
+  - docker run -e CI=true mihaivlasceanu/react-tests npm test -- --coverage
 
 after_success:
   - docker build -t mihaivlasceanu/multi-client ./client
   - docker build -t mihaivlasceanu/multi-nginx ./nginx
   - docker build -t mihaivlasceanu/multi-server ./server
   - docker build -t mihaivlasceanu/multi-worker ./worker
+  ## Login to Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  ## Ia aceste imagini si push-uiestele in DockerHub
+  - docker push mihaivlasceanu/multi-client
+  - docker push mihaivlasceanu/multi-nginx
+  - docker push mihaivlasceanu/multi-server
+  - docker push mihaivlasceanu/multi-worker
   
